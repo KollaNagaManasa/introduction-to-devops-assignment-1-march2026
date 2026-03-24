@@ -14,4 +14,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 # Default: run Flask app
-CMD ["python", "app.py"]
+CMD ["python", "app/app.py"]
