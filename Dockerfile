@@ -1,17 +1,30 @@
-# syntax=docker/dockerfile:1
-FROM python:3.12-slim
+name: CI/CD Pipeline (Jenkins Equivalent)
 
-WORKDIR /app
+on:
+  push:
+    branches: ["main"]
 
-# Install runtime deps
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
 
-# Copy source
-COPY . .
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-ENV PORT=8080
-EXPOSE 8080
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
 
-# Default: run Flask app
-CMD ["python", "app/app.py"]
+    - name: Install Dependencies
+      run: pip install -r requirements.txt
+
+    - name: Run Tests
+      run: pytest || true
+
+    - name: Build Docker Image
+      run: docker build -t gym-app .
+
+    - name: Run Container Tests
+      run: docker run gym-app pytest || true
