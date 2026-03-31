@@ -1,1 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fitness Tracker</title>
+</head>
+<body>
+  <h1>Fitness Tracker</h1>
 
+  <h2>Add Workout</h2>
+  <input id="name" placeholder="Workout name">
+  <input id="duration" placeholder="Duration">
+  <button onclick="addWorkout()">Add</button>
+
+  <h2>Workouts</h2>
+  <ul id="list"></ul>
+
+  <script>
+    const API = "/api/workouts";
+
+    function loadWorkouts() {
+      fetch(API)
+        .then(res => res.json())
+        .then(data => {
+          const list = document.getElementById("list");
+          list.innerHTML = "";
+          data.forEach(w => {
+            const li = document.createElement("li");
+            li.innerText = w.name + " - " + w.duration + " mins";
+            list.appendChild(li);
+          });
+        });
+    }
+
+    function addWorkout() {
+      fetch(API, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          name: document.getElementById("name").value,
+          duration: document.getElementById("duration").value
+        })
+      }).then(() => loadWorkouts());
+    }
+
+    loadWorkouts();
+  </script>
+</body>
+</html>
