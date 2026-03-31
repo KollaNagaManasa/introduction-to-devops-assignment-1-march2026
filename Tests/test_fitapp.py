@@ -1,45 +1,64 @@
-import sys
-import os
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 import json
-from app.app import create_app
 
-def test_health():
-    app = create_app()
-    client = app.test_client()
-    response = client.get('/')
-    assert response.status_code == 200
+import pytest
+
+from app import create_app
 
 
-def test_crud_workout():
-    app = create_app()
-    client = app.test_client()
-    response = client.get('/')
-    assert response.status_code == 200
-    
+@pytest.fixture
+def client():
+    app = create_app({})
+    app.testing = True
+    with app.test_client() as client:
+        # Reset stores for each test
+        app.config["WORKOUTS"] = []
+        app.config["MEMBERS"] = []
+        yield client
+
+
+def test_index_and_health(client):
+    rv = client.get("/")
+    assert rv.status_code == 200
+    assert rv.get_json()["status"] == "ok"
+
+    rv = client.get("/health")
+    assert rv.status_code == 200
+    assert rv.get_json()["status"] == "healthy"
+
+
+def test_create_and_get_workout(client):
     # create
-    r = client.post("/api/workouts", json={"name": "Run", "duration": 30, "calories": 250})
-    assert r.status_code == 201
-    item = r.get_json()
-    assert item["id"] == 1
-
-    # list
-    r = client.get("/api/workouts")
-    assert r.status_code == 200
-    items = r.get_json()
-    assert len(items) == 1
+    data = {"name": "Morning Cardio", "duration_minutes": 30}
+    rv = client.post("/workouts", data=json.dumps(data), content_type="application/json")
+    assert rv.status_code == 201
+    body = rv.get_json()
+    assert body["name"] == data["name"]
 
     # get
-    r = client.get("/api/workouts/1")
-    assert r.status_code == 200
-    assert r.get_json()["name"] == "Run"
+    rv = client.get("/workouts")
+    assert rv.status_code == 200
+    arr = rv.get_json()
+    assert len(arr) == 1
 
-    # delete
-    r = client.delete("/api/workouts/1")
-    assert r.status_code == 204
 
-    # get 404
-    r = client.get("/api/workouts/1")
-    assert r.status_code == 404
+def test_workout_validation(client):
+    rv = client.post("/workouts", data=json.dumps({"name": "X"}), content_type="application/json")
+    assert rv.status_code == 400
+
+
+def test_create_and_get_member(client):
+    data = {"name": "Alice", "email": "alice@example.com"}
+    rv = client.post("/members", data=json.dumps(data), content_type="application/json")
+    assert rv.status_code == 201
+    body = rv.get_json()
+    assert body["email"] == data["email"]
+
+    rv = client.get("/members")
+    assert rv.status_code == 200
+    arr = rv.get_json()
+    assert len(arr) == 1
+
+
+def test_member_validation(client):
+    rv = client.post("/members", data=json.dumps({"name": "Bob", "email": "not-an-email"}), content_type="application/json")
+    assert rv.status_code == 400
