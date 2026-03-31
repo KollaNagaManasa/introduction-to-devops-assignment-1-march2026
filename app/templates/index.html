@@ -1,48 +1,80 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Fitness Tracker</title>
+    <title>Fitness Tracker</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .workout {
+            background: #f1f1f1;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
 </head>
+
 <body>
-  <h1>Fitness Tracker</h1>
 
-  <h2>Add Workout</h2>
-  <input id="name" placeholder="Workout name">
-  <input id="duration" placeholder="Duration">
-  <button onclick="addWorkout()">Add</button>
+<div class="card">
+    <h1>🏋️ Fitness Tracker</h1>
 
-  <h2>Workouts</h2>
-  <ul id="list"></ul>
+    <form method="POST">
+        <input type="text" name="name" placeholder="Workout name" required>
+        <input type="number" name="duration" placeholder="Duration (mins)" required>
+        <button type="submit">Add Workout</button>
+    </form>
 
-  <script>
-    const API = "/api/workouts";
+    <h3>Workouts</h3>
 
-    function loadWorkouts() {
-      fetch(API)
-        .then(res => res.json())
-        .then(data => {
-          const list = document.getElementById("list");
-          list.innerHTML = "";
-          data.forEach(w => {
-            const li = document.createElement("li");
-            li.innerText = w.name + " - " + w.duration + " mins";
-            list.appendChild(li);
-          });
-        });
-    }
+    {% for workout in workouts %}
+        <div class="workout">
+            {{ workout.name }} - {{ workout.duration }} mins
+        </div>
+    {% endfor %}
 
-    function addWorkout() {
-      fetch(API, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          name: document.getElementById("name").value,
-          duration: document.getElementById("duration").value
-        })
-      }).then(() => loadWorkouts());
-    }
+</div>
 
-    loadWorkouts();
-  </script>
 </body>
 </html>
