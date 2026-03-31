@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, abort
+from flask import render_template
 
 def create_app():
     app = Flask(__name__)
@@ -6,6 +7,10 @@ def create_app():
 
     # In-memory store; in real life, replace with DB
     state = {"workouts": [], "next_id": 1}
+
+    @app.get("/")
+    def home():
+        return render_template("index.html")
 
     @app.get("/")
     def root():
