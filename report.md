@@ -1,34 +1,3 @@
-Introduction To DevOps Assignment 
-
- 
-
-DevOps Project Summary 
-
-ACEest Fitness & Gym – End-to-End CI/CD Deployment 
-
- 
-
- 
-
- 
-
- 
-
--By  
-
-Kolla Naga Manasa 
-
-2024tm93519 
-
-M.Tech(Software Engineering) 
-
- 
-
- 
-
- 
-
- 
 
 1. Project Overview 
 
