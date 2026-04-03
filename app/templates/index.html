@@ -554,6 +554,7 @@ margin-right:10px;
 
           <button onclick="calculateCalories()">Calculate</button>
           <div id="calc-error" style="display:none; color:red; margin-top:10px;"></div>
+          <div id="calc-result" style="margin-top:15px; font-size:18px; font-weight:bold; color:#333;"></div>
 
 <div id="calc-result" style="display:none; margin-top:15px;">
   <h5>🔥 Daily Calories: <span id="calc-kcal"></span> kcal</h5>
@@ -810,36 +811,40 @@ margin-right:10px;
   }
 
   // ── CALORIE CALCULATOR ────────────────────────────────────────────────────
-  const res  = await fetch('http://18.60.107.158:30007/calories', {
-    const weight  = parseFloat(document.getElementById('calc-weight').value);
-    const program = document.getElementById('calc-program').value;
-    const resEl   = document.getElementById('calc-result');
-    const errEl   = document.getElementById('calc-error');
-    resEl.style.display = 'none';
-    errEl.style.display = 'none';
+ // ── CALORIE CALCULATOR ────────────────────────────────────────────────────
+async function calculateCalories() {
 
-    if (!weight || !program) {
-      errEl.textContent = 'Please enter weight and select a program.';
-      errEl.style.display = 'block';
-      return;
-    }
+  const weight  = parseFloat(document.getElementById('calc-weight').value);
+  const program = document.getElementById('calc-program').value;
 
-    const res  = await fetch('/calories', {
+  const resEl = document.getElementById('calc-result');
+
+  if (!weight || !program) {
+    resEl.innerText = "Please enter weight and select a program.";
+    return;
+  }
+
+  try {
+    const res = await fetch('/calories', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ weight_kg: weight, program_code: program }),
     });
+
     const data = await res.json();
+
     if (!res.ok) {
-      errEl.textContent = data.error || 'Error calculating calories.';
-      errEl.style.display = 'block';
+      resEl.innerText = data.error || "Error calculating calories";
       return;
     }
-    document.getElementById('calc-kcal').textContent = data.estimated_daily_kcal.toLocaleString();
-    document.getElementById('calc-breakdown').textContent =
-      `${weight} kg × ${data.calorie_factor} (${data.program}) = ${data.estimated_daily_kcal} kcal/day`;
-    resEl.style.display = 'block';
+
+    resEl.innerText =
+      "🔥 Daily Calories: " + data.estimated_daily_kcal + " kcal";
+
+  } catch (error) {
+    resEl.innerText = "Server not reachable";
   }
+}
 
   // ── WORKOUTS ──────────────────────────────────────────────────────────────
   async function loadWorkouts() {
