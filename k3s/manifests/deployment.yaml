@@ -19,4 +19,4 @@ spec:
         image: 095523581136.dkr.ecr.ap-south-2.amazonaws.com/aceest-app
         imagePullPolicy: Always
         ports:
-        - containerPort: 5000
+        - containerPort: 8080
