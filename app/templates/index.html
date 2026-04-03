@@ -812,7 +812,7 @@ margin-right:10px;
 
   // ── CALORIE CALCULATOR ────────────────────────────────────────────────────
 async function calculateCalories() {
-  const weight  = document.getElementById('calc-weight').value;
+  const weight = document.getElementById('calc-weight').value;
   const program = document.getElementById('calc-program').value;
 
   if (!weight || !program) {
@@ -821,18 +821,21 @@ async function calculateCalories() {
   }
 
   try {
-    const response = await fetch('/calories', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ weight_kg: weight, program_code: program }),
-});;
+    const res = await fetch('/calories', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        weight_kg: parseFloat(weight),
+        program_code: program
+      }),
+    });
 
-    const data = await response.json();
+    const data = await res.json();
 
     document.getElementById('calc-result').innerText =
       "🔥 Daily Calories: " + data.estimated_daily_kcal + " kcal";
 
-  } catch (error) {
+  } catch (e) {
     document.getElementById('calc-result').innerText =
       "❌ Error connecting to server";
   }
