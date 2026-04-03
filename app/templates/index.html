@@ -1,11 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <div class="top-links">
-  <a href="#programs-section"><i class="fa-solid fa-dumbbell"></i> Programs</a>
-  <a href="#calculator-section"><i class="fa-solid fa-fire"></i> Calories</a>
-  <a href="#members-section"><i class="fa-solid fa-users"></i> Members</a>
-</div>
+   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
    
    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -391,6 +387,12 @@ table {
 
 <body>
 
+ <div class="top-links">
+  <a href="#programs-section"><i class="fa-solid fa-dumbbell"></i> Programs</a>
+  <a href="#calculator-section"><i class="fa-solid fa-fire"></i> Calories</a>
+  <a href="#members-section"><i class="fa-solid fa-users"></i> Members</a>
+</div>
+
 <!-- NAVBAR -->
 <!--
 <button id="toggleBtn" style="
@@ -551,6 +553,12 @@ margin-right:10px;
           </select>
 
           <button onclick="calculateCalories()">Calculate</button>
+          <div id="calc-error" style="display:none; color:red; margin-top:10px;"></div>
+
+<div id="calc-result" style="display:none; margin-top:15px;">
+  <h5>🔥 Daily Calories: <span id="calc-kcal"></span> kcal</h5>
+  <p id="calc-breakdown"></p>
+</div>
 
         </div>
 
@@ -643,9 +651,9 @@ margin-right:10px;
                 <label class="form-label small"><b>Program (optional)</b></label>
                 <select id="m-program" class="form-select">
                   <option value="">— select program —</option>
-                  <option value="Fat Loss (FL)">Fat Loss (FL)</option>
-                  <option value="Muscle Gain (MG)">Muscle Gain (MG)</option>
-                  <option value="Beginner (BG)">Beginner (BG)</option>
+                  <option value="FL">Fat Loss (FL)</option>
+                  <option value="MG">Muscle Gain (MG)</option>
+                  <option value="BG">Beginner (BG)</option>
                 </select>
               </div>
               <button class="btn btn-gold w-100" type="submit">Register Member</button>
@@ -802,7 +810,7 @@ margin-right:10px;
   }
 
   // ── CALORIE CALCULATOR ────────────────────────────────────────────────────
-  async function calculateCalories() {
+  const res  = await fetch('http://18.60.107.158:30007/calories', {
     const weight  = parseFloat(document.getElementById('calc-weight').value);
     const program = document.getElementById('calc-program').value;
     const resEl   = document.getElementById('calc-result');
