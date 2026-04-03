@@ -552,10 +552,15 @@ margin-right:10px;
             <option value="BG">Beginner</option>
           </select>
 
-          <button type="button" onclick="calculateCalories()">Calculate</button>
-         <div id="calc-result" style="margin-top:15px; font-size:18px; font-weight:bold;"></div>
+          <button onclick="calculateCalories()">Calculate</button>
+          <div id="calc-result" style="margin-top:15px; font-weight:bold;"></div>
+          <div id="calc-error" style="display:none; color:red; margin-top:10px;"></div>
+          <div id="calc-result" style="margin-top:15px; font-size:18px; font-weight:bold; color:#333;"></div>
         
-
+<div id="calc-result" style="display:none; margin-top:15px;">
+  <h5>🔥 Daily Calories: <span id="calc-kcal"></span> kcal</h5>
+  <p id="calc-breakdown"></p>
+</div>
 
         </div>
 
@@ -808,24 +813,27 @@ margin-right:10px;
 
   // ── CALORIE CALCULATOR ────────────────────────────────────────────────────
 async function calculateCalories() {
-  alert("FUNCTION CALLED"); 
-
   const weight = document.getElementById('calc-weight').value;
   const program = document.getElementById('calc-program').value;
 
-  const res = await fetch('/calories', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      weight_kg: parseFloat(weight),
-      program_code: program
-    }),
-  });
+  try {
+    const res = await fetch('/calories', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        weight_kg: parseFloat(weight),
+        program_code: program
+      }),
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  document.getElementById('calc-result').innerText =
-    "🔥 Daily Calories: " + data.estimated_daily_kcal + " kcal";
+    document.getElementById('calc-result').innerText =
+      "🔥 Daily Calories: " + data.estimated_daily_kcal + " kcal";
+
+  } catch (err) {
+    console.error(err);
+  }
 }
   // ── WORKOUTS ──────────────────────────────────────────────────────────────
   async function loadWorkouts() {
