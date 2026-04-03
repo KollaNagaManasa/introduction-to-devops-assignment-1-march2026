@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, render_template, Response
-
+from flask_cors import CORS
 # ---------------------------------------------------------------------------
 # ACEest Fitness & Gym — Program data derived from all 10 version files
 # (Aceestver-1.0 through Aceestver2.0.1 / Aceestver-3.2.4)
@@ -80,6 +80,9 @@ def create_app(test_config=None):
     app.config.setdefault("MEMBERS", [])
 
 
+    app = Flask(__name__)
+    CORS(app)
+    
     @app.route("/favicon.ico")
     def favicon():
         # return a tiny SVG favicon to avoid 404 in the logs
