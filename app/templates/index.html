@@ -811,6 +811,8 @@ async function calculateCalories() {
   const weight = document.getElementById('calc-weight').value;
   const program = document.getElementById('calc-program').value;
 
+  console.log("CLICK WORKING", weight, program);
+
   try {
     const res = await fetch('/calories', {
       method: 'POST',
@@ -821,13 +823,20 @@ async function calculateCalories() {
       }),
     });
 
-    const data = await res.json();
+    console.log("RESPONSE STATUS:", res.status);
 
-    document.getElementById('calc-result').innerText =
+    const data = await res.json();
+    console.log("DATA:", data);
+
+    const resultDiv = document.getElementById('calc-result');
+
+    resultDiv.innerText =
       "🔥 Daily Calories: " + data.estimated_daily_kcal + " kcal";
 
   } catch (err) {
-    console.error(err);
+    console.error("ERROR:", err);
+    document.getElementById('calc-result').innerText =
+      "❌ Error connecting to server";
   }
 }
   // ── WORKOUTS ──────────────────────────────────────────────────────────────
