@@ -1,7 +1,9 @@
 import pytest
-from app.app import app
+from app.app import create_app   # ✅ correct import
+
 @pytest.fixture
 def client():
+    app = create_app()           # ✅ create app instance
     app.testing = True
     return app.test_client()
 
